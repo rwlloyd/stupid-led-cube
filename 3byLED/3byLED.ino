@@ -1,8 +1,16 @@
+/*
+LED Cube pattern generator
+
+rwlloyd. Lincoln. Dec 2023.
+*/
 const int cathodePins[] = {3, 2, 13};
 const int anodePins[] = {12, 11, 10, 9, 8, 7, 6, 5, 4};
 
+const int lednum = 3;
+const int numLayers = lednum;           //Layers are Rows (cathodes)
+const int numColumns = lednum*lednum;   // Columns are Anodes
 bool debug = true;
-int wait = 100;
+int wait = 50; // this is the timing base for all animations except flashing the LEDs
 
 void setup() {
   Serial.begin(9600);
@@ -15,25 +23,41 @@ void setup() {
     pinMode(anodePins[i], OUTPUT);
     digitalWrite(anodePins[i], LOW);
   }
+  ActivateAll();
+  delay(wait*2);
+  ClearAll();
 }
 
 void loop() {
-  VerticalColumns();
+
+  // RandomLEDs();
+  // VerticalColumns();
   // HorizontalColumns();
   // BottomLayer();
-  CycleZLayers();
-  CycleYLayers();
-  CycleXLayers();
-  HorizontalColumns();
+  // CycleZLayers();
+  // CycleYLayers(); // this is good
+  // CycleXLayers();
+  // HorizontalColumns();
+  RandomLEDs();
 }
 
-void CycleZLayers(){
-  activateLayer(0);
+void RandomLEDs(){
+  int randCol = round(random(0,9));
+  int randRow = round(random(0,3));
+  activateColumn(randCol);
+  activateLayer(randRow);
+  delay(wait);
+  deactivateColumn(randCol);
+  deactivateLayer(randRow);
+}
+
+void CycleZLayers(){ // Works as intended
+  activateLayer(2);
   for (int column=0; column<9; column++){
     activateColumn(column);
   }
   delay(wait);
-  deactivateLayer(0);
+  deactivateLayer(2);
 
   delay(wait);
 
@@ -46,12 +70,12 @@ void CycleZLayers(){
 
   delay(wait);
 
-  activateLayer(2);
+  activateLayer(0);
   for (int column=0; column<9; column++){
     activateColumn(column);
   }
   delay(wait);
-  deactivateLayer(2);
+  deactivateLayer(0);
 
   delay(wait);
   
@@ -69,7 +93,7 @@ void CycleZLayers(){
   // }
 }
 
-void CycleYLayers(){
+void CycleYLayers(){ // Works as intended
   // we need all the layers
   for (int layer=0; layer< 3; layer++){
     activateLayer(layer);
@@ -207,6 +231,24 @@ void activateLayer(int layer) {
 
 void deactivateLayer(int layer) {
   digitalWrite(cathodePins[layer], LOW);
+}
+
+void ActivateAll(){
+  for(int layer=0; layer<numLayers; layer++){
+    activateLayer(layer);
+  }
+  for (int col=0; col<numColumns; col++){
+    activateColumn(col);
+  }
+}
+
+void ClearAll(){
+  for(int layer=0; layer<numLayers; layer++){
+    deactivateLayer(layer);
+  }
+  for (int col=0; col<numColumns; col++){
+    deactivateColumn(col);
+  }
 }
 
 void lightLED(int row, int col) {
