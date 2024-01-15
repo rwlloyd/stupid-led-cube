@@ -1,4 +1,4 @@
-# stupid-led-cude
+# stupid-led-cube
 
 ### This is a repository about a little 3x3x3 LED cube
 

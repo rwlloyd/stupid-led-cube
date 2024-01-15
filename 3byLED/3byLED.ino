@@ -10,7 +10,7 @@ const int lednum = 3;
 const int numLayers = lednum;           //Layers are Rows (cathodes)
 const int numColumns = lednum*lednum;   // Columns are Anodes
 bool debug = true;
-int wait = 50; // this is the timing base for all animations except flashing the LEDs
+int wait = 100; // this is the timing base for all animations except flashing the LEDs
 
 void setup() {
   Serial.begin(9600);
@@ -33,12 +33,52 @@ void loop() {
   // RandomLEDs();
   // VerticalColumns();
   // HorizontalColumns();
-  // BottomLayer();
+  // // BottomLayer();
   // CycleZLayers();
   // CycleYLayers(); // this is good
   // CycleXLayers();
   // HorizontalColumns();
-  RandomLEDs();
+  // for (int i=0; i<27; i++){
+  //   RandomLEDs();
+  // }
+  breathe();
+  
+}
+
+void breathe(){ // a visual aid to box breathing
+    wait = 10; // set the wait for random to be 10ms
+  //hold
+// delay(3000);
+  for (int i=0; i<400; i++){
+    RandomLEDs();
+  }
+  ClearAll();
+  for (int column=0; column<9; column++){
+    activateColumn(column);
+  }
+  // Breathe in
+  activateLayer(0);
+  delay(1250); //2
+  activateLayer(1);
+  delay(1250); // 3
+  activateLayer(2);
+  delay(1500); //4
+
+ // hold
+ //  delay(3000);
+  ClearAll();
+  for (int i=0; i<400; i++){
+    RandomLEDs();
+  }
+  ActivateAll();
+  delay(1250);
+ //breathe out
+  deactivateLayer(2);
+  delay(1250); //2
+  deactivateLayer(1);
+  delay(1250);
+  deactivateLayer(0);
+  delay(1250);
 }
 
 void RandomLEDs(){
